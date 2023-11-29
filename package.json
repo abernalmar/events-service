@@ -1,6 +1,11 @@
 {
   "name": "eventhub-events",
   "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abernalmar/EventHub-Events.git"
+  },
+  "homepage": "https://github.com/abernalmar/EventHub-Events",
   "private": true,
   "scripts": {
     "start": "node ./bin/www"

@@ -1,13 +1,13 @@
 build:
-  eventhub-events:
+  events-service:
     context: .
 
 deploy:
-  - helm upgrade --install eventhub-events chart
+  - helm upgrade --install events-service chart
     --set image.repository=${OKTETO_BUILD_EVENTHUB_EVENTS_IMAGE}
 
 dev:
-  eventhub-events:
+  events-service:
     command: npm start
     sync:
       - .:/app

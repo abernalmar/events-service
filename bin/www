@@ -5,7 +5,7 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('eventhub-events:server');
+var debug = require('debug')('events-service:server');
 var http = require('http');
 
 /**

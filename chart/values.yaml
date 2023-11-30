@@ -1,4 +1,4 @@
 events: 
-  image: abernalmar/events-service:etiqueta:0.1.0
+  image: abernalmar/events-service:0.1.0
   replicaCount: 1
   

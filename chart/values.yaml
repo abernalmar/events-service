@@ -1,4 +1,3 @@
 events: 
-  image: abernalmar/events-service
+  image: francaroalb/events-service
   replicaCount: 1
-  

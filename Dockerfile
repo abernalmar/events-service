@@ -1,8 +1,9 @@
-FROM --platform=linux/amd64 node:18
+FROM node:13-alpine
+
 WORKDIR /app
 
 COPY package.json .
-COPY package-lock.json .
+COPY package-lock.json . 
 
 RUN npm install
 
@@ -15,5 +16,3 @@ COPY app.js .
 EXPOSE 3000
 
 CMD npm start
-
-

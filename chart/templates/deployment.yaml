@@ -20,7 +20,7 @@ spec:
       terminationGracePeriodSeconds: 0
       containers:
         - name: events
-          image: {{ .Values.events.image }}
+          image: {{ .Values.eventshub.image }}
           ports:
             - name: http
               containerPort: 3000

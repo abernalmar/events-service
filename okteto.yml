@@ -4,7 +4,7 @@ build:
 
 deploy:
   - helm upgrade --install events-service chart
-    --set image.repository=${OKTETO_BUILD_EVENTHUB_EVENTS_IMAGE}
+    --set events.image=${OKTETO_BUILD_EVENTHUB_EVENTS_IMAGE}
 
 dev:
   events-service:

@@ -1,3 +1,0 @@
-events: 
-  image: francaroalb/events-service:v0
-  replicaCount: 1

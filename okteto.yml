@@ -5,6 +5,7 @@ build:
 deploy:
   - helm upgrade --install events-service chart
     --set eventshub.image=${OKTETO_BUILD_EVENTS_SERVICE_IMAGE}
+    --set events.replicaCount=1
 
 dev:
   events-service:

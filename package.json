@@ -8,7 +8,8 @@
   "homepage": "https://github.com/abernalmar/events-service",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "test": "jest"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -17,5 +18,10 @@
     "express": "~4.16.1",
     "mongoose": "^8.0.1",
     "morgan": "~1.9.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-extended": "^4.0.2",
+    "supertest": "^6.3.3"
   }
 }

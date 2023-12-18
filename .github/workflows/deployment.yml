@@ -2,23 +2,16 @@ name: Okteto Deployment
 
 on:
   push:
-    branches: [ main ]
-
+    branches: [main]
+    
 jobs:
+  test:
+    uses:  obnubilas/EventHub-Users/.github/workflows/tests.yml@main
+    
   deploy:
+    needs:  test
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-
-    - name: Okteto Login
-      uses: okteto/login@latest
-      with:
-        token: ${{ secrets.OKTETO_TOKEN }}
-        
-    - name: Okteto Deploy
-      uses: resinas/okteto-push@v1.0.2
-      with:
-        namespace: abernalmar
-        build: true
-    
+      
+      - uses: actions/checkout@v2

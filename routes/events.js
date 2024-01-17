@@ -22,6 +22,25 @@ router.get("/:name?", async function (req, res, next) {
   }
 });
 
+/* GET by _id */
+router.get("/id/:id", async function (req, res, next) {
+  var eventId = req.params.id;
+
+  if (eventId) {
+    // If eventId is provided, find and return the specific event
+    var event = await Event.findById(eventId);
+    if (event) {
+      res.json(event);
+    } else {
+      res.status(404).json({ error: "Event not found" });
+    }
+  } else {
+    // If no eventId provided, return the entire list of events
+    const result = await Event.find();
+    res.send(result.map((c) => c.cleanup()));
+  }
+});
+
 /* POST create a new event. */
 router.post("/", async function (req, res, next) {
   const { name, place, date, description, category, assistants } = req.body;

@@ -9,6 +9,7 @@ var eventsRouter = require("./routes/events");
 
 var app = express();
 
+
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -33,5 +34,8 @@ mongoose.connect(DB_URL);
 const db = mongoose.connection;
 
 db.on("error", console.error.bind(console, "db connection error"));
+
+
+
 
 module.exports = app;

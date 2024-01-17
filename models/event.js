@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const eventSchema = new mongoose.Schema({
+  // 
   name: {
     type: String,
     required: true,
@@ -35,6 +36,7 @@ eventSchema.methods.cleanup = function () {
     description: this.description,
     category: this.category,
     assistants: this.assistants,
+    _id: this._id
   };
 };
 

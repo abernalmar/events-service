@@ -29,7 +29,6 @@ const mongoose = require("mongoose");
 
 const DB_URL =
   "mongodb+srv://eventos:eventos23@events-service.spgszx5.mongodb.net/?retryWrites=true&w=majority";
-console.log("Connecting: %s", DB_URL);
 mongoose.connect(DB_URL);
 const db = mongoose.connection;
 

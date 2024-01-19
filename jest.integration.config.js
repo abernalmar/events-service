@@ -1,10 +1,9 @@
-/**
+/*
  * For a detailed explanation regarding each configuration property, visit:
  * https://jestjs.io/docs/configuration
  */
 
-/** @type {import('jest').Config} */
-const config = {
+module.exports = {
     // All imported modules in your tests should be mocked automatically
     // automock: false,
   
@@ -12,7 +11,7 @@ const config = {
     // bail: 0,
   
     // The directory where Jest should store its cached dependency information
-    // cacheDirectory: "C:\\Users\\javit\\AppData\\Local\\Temp\\jest",
+    // cacheDirectory: "/private/var/folders/zh/rsnvvr_n1mb7392grd9yhnlw0000gn/T/jest_dx",
   
     // Automatically clear mock calls, instances, contexts and results before every test
     // clearMocks: false,
@@ -28,7 +27,7 @@ const config = {
   
     // An array of regexp pattern strings used to skip coverage collection
     // coveragePathIgnorePatterns: [
-    //   "\\\\node_modules\\\\"
+    //   "/node_modules/"
     // ],
   
     // Indicates which provider should be used to instrument code for coverage
@@ -136,7 +135,7 @@ const config = {
     // setupFiles: [],
   
     // A list of paths to modules that run some code to configure or set up the testing framework before each test
-     setupFilesAfterEnv: ["jest-extended/all"],
+    setupFilesAfterEnv: ["jest-extended/all"],
   
     // The number of seconds after which a test is considered as slow and reported as such in the results.
     // slowTestThreshold: 5,
@@ -160,13 +159,12 @@ const config = {
     // ],
   
     // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
-    testPathIgnorePatterns: [
-       "/node_modules/",
-       "/tests/integration/"
-    ],
+    // testPathIgnorePatterns: [
+    //   "/node_modules/"
+    // ],
   
     // The regexp pattern or array of patterns that Jest uses to detect test files
-    // testRegex: [],
+    testRegex: ["/tests/integration/"],
   
     // This option allows the use of a custom results processor
     // testResultsProcessor: undefined,
@@ -179,8 +177,8 @@ const config = {
   
     // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
     // transformIgnorePatterns: [
-    //   "\\\\node_modules\\\\",
-    //   "\\.pnp\\.[^\\\\]+$"
+    //   "/node_modules/",
+    //   "\\.pnp\\.[^\\/]+$"
     // ],
   
     // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them
@@ -195,5 +193,3 @@ const config = {
     // Whether to use watchman for file crawling
     // watchman: true,
   };
-  
-  module.exports = config;

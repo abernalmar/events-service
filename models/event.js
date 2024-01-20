@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const eventSchema = new mongoose.Schema({
-  // 
+  //
   name: {
     type: String,
     required: true,
@@ -20,12 +20,6 @@ const eventSchema = new mongoose.Schema({
   category: {
     type: String,
   },
-  assistants: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: String,
-    },
-  ],
 });
 
 eventSchema.methods.cleanup = function () {
@@ -35,8 +29,7 @@ eventSchema.methods.cleanup = function () {
     date: this.date,
     description: this.description,
     category: this.category,
-    assistants: this.assistants,
-    _id: this._id
+    _id: this._id,
   };
 };
 

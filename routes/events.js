@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 const debug = require("debug")("EventHub:events");
 var Event = require("../models/event");
+const axios = require("axios");
 
 /* GET */
 router.get("/:name?", async function (req, res, next) {
@@ -42,15 +43,15 @@ router.get("/id/:id", async function (req, res, next) {
 });
 
 /* POST create a new event. */
+
 router.post("/", async function (req, res, next) {
-  const { name, place, date, description, category, assistants } = req.body;
+  const { name, place, date, description, category } = req.body;
   const event = new Event({
     name,
     place,
     date,
     description,
     category,
-    assistants,
   });
   try {
     await event.save();
@@ -61,11 +62,9 @@ router.post("/", async function (req, res, next) {
       res.status(400).send({ error: e.message });
     } else {
       console.error("DB problem", e);
-      res
-        .status(500)
-        .send({
-          error: "Internal Server Error: Failed to save event to the database.",
-        });
+      res.status(500).send({
+        error: "Internal Server Error: Failed to save event to the database.",
+      });
     }
   }
 });
@@ -82,12 +81,9 @@ router.delete("/:name", async function (req, res, next) {
     }
   } catch (error) {
     console.error("DB problem", error);
-    res
-      .status(500)
-      .send({
-        error:
-          "Internal Server Error: Failed to delete event from the database.",
-      });
+    res.status(500).send({
+      error: "Internal Server Error: Failed to delete event from the database.",
+    });
   }
 });
 
@@ -107,11 +103,9 @@ router.put("/:name", async function (req, res, next) {
     }
   } catch (error) {
     console.error("DB problem", error);
-    res
-      .status(500)
-      .send({
-        error: "Internal Server Error: Failed to update event in the database.",
-      });
+    res.status(500).send({
+      error: "Internal Server Error: Failed to update event in the database.",
+    });
   }
 });
 

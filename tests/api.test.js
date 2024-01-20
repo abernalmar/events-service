@@ -94,13 +94,6 @@ describe("Events API", () => {
     it("should update an existing event", async () => {
       const eventNameToUpdate = "EventToUpdate";
 
-      const assistantObjectId1 = await Event.findOne({
-        name: "UpdatedAssistant1",
-      }).select("_id");
-      const assistantObjectId2 = await Event.findOne({
-        name: "UpdatedAssistant2",
-      }).select("_id");
-
       // Crea un evento para ser actualizado
       const eventToUpdate = new Event({
         name: eventNameToUpdate,
@@ -108,7 +101,6 @@ describe("Events API", () => {
         date: new Date(2021, 3, 31),
         description: "Test Description",
         category: "Test Category",
-        assistants: [assistantObjectId1, assistantObjectId2],
       });
       await eventToUpdate.save();
 
@@ -116,10 +108,6 @@ describe("Events API", () => {
         place: "Updated Place",
         description: "Updated Description",
         category: "Updated Category",
-        assistants: [
-          await Event.findOne({ name: "UpdatedAssistant1" }).select("_id"),
-          await Event.findOne({ name: "UpdatedAssistant2" }).select("_id"),
-        ],
       };
 
       const response = await request(app)
@@ -131,7 +119,6 @@ describe("Events API", () => {
       expect(response.body.place).toBe(updatedEventData.place);
       expect(response.body.description).toBe(updatedEventData.description);
       expect(response.body.category).toBe(updatedEventData.category);
-      expect(response.body.assistants).toEqual(updatedEventData.assistants);
     });
 
     it("should return 404 for updating a non-existing event", async () => {
@@ -140,7 +127,6 @@ describe("Events API", () => {
         place: "Updated Place",
         description: "Updated Description",
         category: "Updated Category",
-        assistants: ["UpdatedAssistant1", "UpdatedAssistant2"],
       };
 
       const response = await request(app)
@@ -156,14 +142,6 @@ describe("Events API", () => {
     it("should delete an existing event", async () => {
       const eventNameToDelete = "EventToDelete";
 
-      // Busca o crea ObjectId válidos
-      const assistantObjectId1 = await Event.findOne({
-        name: "Assistant1",
-      }).select("_id");
-      const assistantObjectId2 = await Event.findOne({
-        name: "Assistant2",
-      }).select("_id");
-
       // Crea un evento para ser eliminado
       const eventToDelete = new Event({
         name: eventNameToDelete,
@@ -171,7 +149,6 @@ describe("Events API", () => {
         date: new Date(2024, 3, 19),
         description: "Test Description",
         category: "Test Category",
-        assistants: [assistantObjectId1, assistantObjectId2],
       });
 
       await eventToDelete.save();

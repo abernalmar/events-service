@@ -40,8 +40,13 @@ describe("Events API", () => {
         date: new Date(2024, 3, 31),
       };
 
+      const authHeader = {
+        Authorization: 'Bearer b3c5c72b-e228-424d-98a8-a370c4ee2d5a',
+      };
+
       const response = await request(app)
         .post("/api/v1/events")
+        .set(authHeader)
         .send(eventData);
 
       expect(response.status).toBe(201);
@@ -52,9 +57,12 @@ describe("Events API", () => {
         name: "Test Event",
         // Missing 'place' field intentionally
       };
-
+      const authHeader = {
+        Authorization: 'Bearer b3c5c72b-e228-424d-98a8-a370c4ee2d5a',
+      };
       const response = await request(app)
         .post("/api/v1/events")
+        .set(authHeader)
         .send(incompleteEventData);
 
       expect(response.status).toBe(400);
@@ -67,8 +75,13 @@ describe("Events API", () => {
         date: "invalid-date-format", // Format is not valid
       };
 
+      const authHeader = {
+        Authorization: 'Bearer b3c5c72b-e228-424d-98a8-a370c4ee2d5a',
+      };
+
       const response = await request(app)
         .post("/api/v1/events")
+        .set(authHeader)
         .send(eventData);
 
       expect(response.status).toBe(400);
@@ -109,9 +122,12 @@ describe("Events API", () => {
         description: "Updated Description",
         category: "Updated Category",
       };
-
+      const authHeader = {
+        Authorization: 'Bearer b3c5c72b-e228-424d-98a8-a370c4ee2d5a',
+      };
       const response = await request(app)
         .put(`/api/v1/events/${eventNameToUpdate}`)
+        .set(authHeader)
         .send(updatedEventData);
 
       expect(response.status).toBe(200);
@@ -128,9 +144,13 @@ describe("Events API", () => {
         description: "Updated Description",
         category: "Updated Category",
       };
+      const authHeader = {
+        Authorization: 'Bearer b3c5c72b-e228-424d-98a8-a370c4ee2d5a',
+      };
 
       const response = await request(app)
         .put(`/api/v1/events/${nonExistingEventName}`)
+        .set(authHeader)
         .send(updatedEventData);
 
       expect(response.status).toBe(404);
@@ -150,12 +170,15 @@ describe("Events API", () => {
         description: "Test Description",
         category: "Test Category",
       });
+      
 
       await eventToDelete.save();
-
+      const authHeader = {
+        Authorization: 'Bearer b3c5c72b-e228-424d-98a8-a370c4ee2d5a',
+      };
       const response = await request(app).delete(
         `/api/v1/events/${eventNameToDelete}`
-      );
+      ).set(authHeader);
 
       expect(response.status).toBe(200);
       expect(response.body.name).toBe(eventNameToDelete);
@@ -167,9 +190,12 @@ describe("Events API", () => {
 
     it("should return 404 for a non-existing event", async () => {
       const nonExistingEventName = "NonExistingEvent";
+      const authHeader = {
+        Authorization: 'Bearer b3c5c72b-e228-424d-98a8-a370c4ee2d5a',
+      };
       const response = await request(app).delete(
         `/api/v1/events/${nonExistingEventName}`
-      );
+      ).set(authHeader);
 
       expect(response.status).toBe(404);
       expect(response.body.error).toBe("Event not found");

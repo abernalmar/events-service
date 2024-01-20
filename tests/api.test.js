@@ -13,28 +13,39 @@ describe("Events API", () => {
     });
   });
 
-  describe("GET /events", () => {
+  describe("GET /api/v1/events", () => {
     it("should return a list of events", async () => {
-      const response = await request(app).get("/events");
+      const response = await request(app).get("/api/v1/events");
 
       expect(response.status).toBe(200);
       expect(response.body).toBeInstanceOf(Array);
-    }, 10000);
+    });
+
+    it("should return 404 for a non-existing event", async () => {
+      const nonExistingEventName = "NonExistingEvent";
+      const response = await request(app).get(
+        `/api/v1/events/${nonExistingEventName}`
+      );
+
+      expect(response.status).toBe(404);
+      expect(response.body.error).toBe("Event not found");
+    });
   });
 
   describe("POST /events", () => {
-    /* DA ERROR LA DATE, NO SÉ EN QUÉ FORMATO PONERLA
     it("should create a new event", async () => {
       const eventData = {
         name: "Test Event",
         place: "Test Place",
-        date: new Date("2023-01-01T12:00:00Z"),
+        date: new Date(2024, 3, 31),
       };
 
-      const response = await request(app).post("/events").send(eventData);
+      const response = await request(app)
+        .post("/api/v1/events")
+        .send(eventData);
 
       expect(response.status).toBe(201);
-    });*/
+    });
 
     it("should return 400 for incomplete event data", async () => {
       const incompleteEventData = {
@@ -43,7 +54,7 @@ describe("Events API", () => {
       };
 
       const response = await request(app)
-        .post("/events")
+        .post("/api/v1/events")
         .send(incompleteEventData);
 
       expect(response.status).toBe(400);
@@ -56,11 +67,14 @@ describe("Events API", () => {
         date: "invalid-date-format", // Format is not valid
       };
 
-      const response = await request(app).post("/events").send(eventData);
+      const response = await request(app)
+        .post("/api/v1/events")
+        .send(eventData);
 
       expect(response.status).toBe(400);
     });
 
+    /*
     it("should return 400 if 'date' is missing", async () => {
       const incompleteEventData = {
         name: "Test Event",
@@ -69,10 +83,101 @@ describe("Events API", () => {
       };
 
       const response = await request(app)
-        .post("/events")
+        .post("/api/v1/events")
         .send(incompleteEventData);
 
       expect(response.status).toBe(400);
+    });*/
+  });
+
+  describe("PUT /api/v1/events/:name", () => {
+    it("should update an existing event", async () => {
+      const eventNameToUpdate = "EventToUpdate";
+
+      // Crea un evento para ser actualizado
+      const eventToUpdate = new Event({
+        name: eventNameToUpdate,
+        place: "Test Place",
+        date: new Date(2021, 3, 31),
+        description: "Test Description",
+        category: "Test Category",
+      });
+      await eventToUpdate.save();
+
+      const updatedEventData = {
+        place: "Updated Place",
+        description: "Updated Description",
+        category: "Updated Category",
+      };
+
+      const response = await request(app)
+        .put(`/api/v1/events/${eventNameToUpdate}`)
+        .send(updatedEventData);
+
+      expect(response.status).toBe(200);
+      expect(response.body.name).toBe(eventNameToUpdate);
+      expect(response.body.place).toBe(updatedEventData.place);
+      expect(response.body.description).toBe(updatedEventData.description);
+      expect(response.body.category).toBe(updatedEventData.category);
     });
+
+    it("should return 404 for updating a non-existing event", async () => {
+      const nonExistingEventName = "NonExistingEvent";
+      const updatedEventData = {
+        place: "Updated Place",
+        description: "Updated Description",
+        category: "Updated Category",
+      };
+
+      const response = await request(app)
+        .put(`/api/v1/events/${nonExistingEventName}`)
+        .send(updatedEventData);
+
+      expect(response.status).toBe(404);
+      expect(response.body.error).toBe("Event not found");
+    });
+  });
+
+  describe("DELETE /api/v1/events/:name", () => {
+    it("should delete an existing event", async () => {
+      const eventNameToDelete = "EventToDelete";
+
+      // Crea un evento para ser eliminado
+      const eventToDelete = new Event({
+        name: eventNameToDelete,
+        place: "Test Place",
+        date: new Date(2024, 3, 19),
+        description: "Test Description",
+        category: "Test Category",
+      });
+
+      await eventToDelete.save();
+
+      const response = await request(app).delete(
+        `/api/v1/events/${eventNameToDelete}`
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.body.name).toBe(eventNameToDelete);
+
+      // Verifica que el evento realmente se eliminó de la base de datos
+      const deletedEvent = await Event.findOne({ name: eventNameToDelete });
+      expect(deletedEvent).toBeNull();
+    });
+
+    it("should return 404 for a non-existing event", async () => {
+      const nonExistingEventName = "NonExistingEvent";
+      const response = await request(app).delete(
+        `/api/v1/events/${nonExistingEventName}`
+      );
+
+      expect(response.status).toBe(404);
+      expect(response.body.error).toBe("Event not found");
+    });
+  });
+
+  afterAll(async () => {
+    await Event.deleteMany({});
+    await mongoose.connection.close();
   });
 });

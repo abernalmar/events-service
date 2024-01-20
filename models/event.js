@@ -1,14 +1,15 @@
 const mongoose = require("mongoose");
 
 const eventSchema = new mongoose.Schema({
-  //
   name: {
     type: String,
     required: true,
+    unique: false,
   },
   place: {
     type: String,
     required: true,
+    unique: false,
   },
   date: {
     type: Date,
@@ -16,9 +17,11 @@ const eventSchema = new mongoose.Schema({
   },
   description: {
     type: String,
+    unique: false,
   },
   category: {
     type: String,
+    unique: false,
   },
 });
 

@@ -177,6 +177,7 @@ describe("Events API", () => {
   });
 
   afterAll(async () => {
+    await Event.deleteMany({});
     await mongoose.connection.close();
   });
 });

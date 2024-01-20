@@ -4,6 +4,8 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var cors = require("cors");
 
+const passport = require('./passport');
+
 var indexRouter = require("./routes/index");
 var eventsRouter = require("./routes/events");
 
@@ -17,7 +19,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(
   cors({
-    origin: "http://localhost:3001",
+    origin: "*",
   })
 );
 

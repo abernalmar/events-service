@@ -198,4 +198,8 @@ describe("Events API", () => {
       expect(response.body.error).toBe("Event not found");
     });
   });
+
+  afterAll(async () => {
+    await mongoose.connection.close();
+  });
 });

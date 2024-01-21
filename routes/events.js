@@ -2,6 +2,8 @@ var express = require("express");
 var router = express.Router();
 const debug = require("debug")("EventHub:events");
 var Event = require("../models/event");
+var passport = require('passport');
+
 const axios = require("axios");
 
 /* GET events listing*/
@@ -14,6 +16,9 @@ router.get("/", async function (req, res, next) {
     res.sendStatus(500);
   }
 });
+
+
+
 
 /* GET */
 router.get("/:name?", async function (req, res, next) {
@@ -54,9 +59,11 @@ router.get("/id/:id", async function (req, res, next) {
 });
 
 /* POST create a new event. */
-
-router.post("/", async function (req, res, next) {
+router.post("/",
+  passport.authenticate('bearer', { session: false }),
+  async function (req, res, next) {
   const { name, place, date, description, category } = req.body;
+
   const event = new Event({
     name,
     place,
@@ -128,7 +135,9 @@ router.post("/", async function (req, res, next) {
 });*/
 
 /* DELETE delete an existing event. */
-router.delete("/:name", async function (req, res, next) {
+router.delete("/:name", 
+  passport.authenticate('bearer', { session: false }),
+  async function (req, res, next) {
   var name = req.params.name;
   try {
     const deletedEvent = await Event.findOneAndDelete({ name: name });
@@ -146,7 +155,9 @@ router.delete("/:name", async function (req, res, next) {
 });
 
 /* PUT update an existing event. */
-router.put("/:name", async function (req, res, next) {
+router.put("/:name",
+  passport.authenticate('bearer', { session: false }),
+  async function (req, res, next) {
   var name = req.params.name;
   var updatedEvent = req.body;
 

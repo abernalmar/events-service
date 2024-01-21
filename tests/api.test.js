@@ -35,8 +35,8 @@ describe("Events API", () => {
   describe("POST /events", () => {
     it("should create a new event", async () => {
       const eventData = {
-        name: "Test Event",
-        place: "Test Place",
+        name: "Cumpleaños Celia",
+        place: "Parque",
         date: new Date(2024, 3, 31),
       };
 
@@ -105,7 +105,7 @@ describe("Events API", () => {
 
   describe("PUT /api/v1/events/:name", () => {
     it("should update an existing event", async () => {
-      const eventNameToUpdate = "EventToUpdate";
+      const eventNameToUpdate = "Boda A&J";
 
       // Crea un evento para ser actualizado
       const eventToUpdate = new Event({
@@ -118,9 +118,9 @@ describe("Events API", () => {
       await eventToUpdate.save();
 
       const updatedEventData = {
-        place: "Updated Place",
-        description: "Updated Description",
-        category: "Updated Category",
+        place: "Hacienda",
+        description: "Una boda en una hacienda",
+        category: "Boda",
       };
       const authHeader = {
         Authorization: "Bearer b3c5c72b-e228-424d-98a8-a370c4ee2d5a",

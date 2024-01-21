@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 const debug = require("debug")("EventHub:events");
 var Event = require("../models/event");
-var passport = require('passport');
+var passport = require("passport");
 
 const axios = require("axios");
 
@@ -16,9 +16,6 @@ router.get("/", async function (req, res, next) {
     res.sendStatus(500);
   }
 });
-
-
-
 
 /* GET */
 router.get("/:name?", async function (req, res, next) {
@@ -59,33 +56,35 @@ router.get("/id/:id", async function (req, res, next) {
 });
 
 /* POST create a new event. */
-router.post("/",
-  passport.authenticate('bearer', { session: false }),
+router.post(
+  "/",
+  passport.authenticate("bearer", { session: false }),
   async function (req, res, next) {
-  const { name, place, date, description, category } = req.body;
+    const { name, place, date, description, category } = req.body;
 
-  const event = new Event({
-    name,
-    place,
-    date,
-    description,
-    category,
-  });
-  try {
-    await event.save();
-    res.sendStatus(201); // Envía respuesta 201 solo cuando la operación es exitosa
-  } catch (e) {
-    if (e.errors) {
-      console.error("Validation problem with saving", e);
-      res.status(400).send({ error: e.message });
-    } else {
-      console.error("DB problem", e);
-      res.status(500).send({
-        error: "Internal Server Error: Failed to save event to the database.",
-      });
+    const event = new Event({
+      name,
+      place,
+      date,
+      description,
+      category,
+    });
+    try {
+      await event.save();
+      res.sendStatus(201); // Envía respuesta 201 solo cuando la operación es exitosa
+    } catch (e) {
+      if (e.errors) {
+        console.error("Validation problem with saving", e);
+        res.status(400).send({ error: e.message });
+      } else {
+        console.error("DB problem", e);
+        res.status(500).send({
+          error: "Internal Server Error: Failed to save event to the database.",
+        });
+      }
     }
   }
-});
+);
 
 /*
 router.post("/", async function (req, res, next) {
@@ -135,47 +134,52 @@ router.post("/", async function (req, res, next) {
 });*/
 
 /* DELETE delete an existing event. */
-router.delete("/:name", 
-  passport.authenticate('bearer', { session: false }),
+router.delete(
+  "/:name",
+  passport.authenticate("bearer", { session: false }),
   async function (req, res, next) {
-  var name = req.params.name;
-  try {
-    const deletedEvent = await Event.findOneAndDelete({ name: name });
-    if (deletedEvent) {
-      res.json(deletedEvent);
-    } else {
-      res.status(404).json({ error: "Event not found" });
+    var name = req.params.name;
+    try {
+      const deletedEvent = await Event.findOneAndDelete({ name: name });
+      if (deletedEvent) {
+        res.json(deletedEvent);
+      } else {
+        res.status(404).json({ error: "Event not found" });
+      }
+    } catch (error) {
+      console.error("DB problem", error);
+      res.status(500).send({
+        error:
+          "Internal Server Error: Failed to delete event from the database.",
+      });
     }
-  } catch (error) {
-    console.error("DB problem", error);
-    res.status(500).send({
-      error: "Internal Server Error: Failed to delete event from the database.",
-    });
   }
-});
+);
 
 /* PUT update an existing event. */
-router.put("/:name",
-  passport.authenticate('bearer', { session: false }),
+router.put(
+  "/:name",
+  passport.authenticate("bearer", { session: false }),
   async function (req, res, next) {
-  var name = req.params.name;
-  var updatedEvent = req.body;
+    var name = req.params.name;
+    var updatedEvent = req.body;
 
-  try {
-    const existingEvent = await Event.findOne({ name: name });
-    if (existingEvent) {
-      Object.assign(existingEvent, updatedEvent);
-      await existingEvent.save();
-      res.json(existingEvent);
-    } else {
-      res.status(404).json({ error: "Event not found" });
+    try {
+      const existingEvent = await Event.findOne({ name: name });
+      if (existingEvent) {
+        Object.assign(existingEvent, updatedEvent);
+        await existingEvent.save();
+        res.json(existingEvent);
+      } else {
+        res.status(404).json({ error: "Event not found" });
+      }
+    } catch (error) {
+      console.error("DB problem", error);
+      res.status(500).send({
+        error: "Internal Server Error: Failed to update event in the database.",
+      });
     }
-  } catch (error) {
-    console.error("DB problem", error);
-    res.status(500).send({
-      error: "Internal Server Error: Failed to update event in the database.",
-    });
   }
-});
+);
 
 module.exports = router;

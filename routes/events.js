@@ -2,8 +2,23 @@ var express = require("express");
 var router = express.Router();
 const debug = require("debug")("EventHub:events");
 var Event = require("../models/event");
-const axios = require('axios');
-const passport = require('passport');
+
+var passport = require("passport");
+
+const axios = require("axios");
+
+/* GET events listing*/
+router.get("/", async function (req, res, next) {
+  try {
+    const result = await Event.find();
+    res.send(result.map((c) => c.cleanup()));
+  } catch (e) {
+    debug("DB problem", e);
+    res.sendStatus(500);
+  }
+});
+
+
 /* GET */
 router.get("/:name?", async function (req, res, next) {
   var eventName = req.params.name;
@@ -42,18 +57,21 @@ router.get("/id/:id", async function (req, res, next) {
   }
 });
 
+
 // Ruta para crear un evento
 router.post("/", async function (req, res, next) {
   const { name, place, date, description, category } = req.body;
 
   try {
     // Crear una instancia del modelo Event con los datos proporcionados
+
     const event = new Event({
       name,
       place,
       date,
       description,
       category,
+
       assistants: [], // Inicializamos la lista de asistentes vacía por ahora
     });
 
@@ -73,9 +91,14 @@ router.post("/", async function (req, res, next) {
       res.status(500).json({
         error: "Internal Server Error: Failed to save event to the database.",
       });
+
+    });
+  
     }
   }
-});
+);
+
+
 
 // Función para crear automáticamente un asistente
 async function createAutomaticAssistant(eventId) {
@@ -124,46 +147,97 @@ async function createAutomaticAssistant(eventId) {
 /* DELETE delete an existing event. */
 router.delete("/:name", async function (req, res, next) {
   var name = req.params.name;
+
   try {
-    const deletedEvent = await Event.findOneAndDelete({ name: name });
-    if (deletedEvent) {
-      res.json(deletedEvent);
-    } else {
-      res.status(404).json({ error: "Event not found" });
+    // Realizar una solicitud a la API de usuarios para obtener información del usuario
+    const userResponse = await axios.get(`http://localhost:3001/users/username/${username}`);
+    const userData = userResponse.data;
+
+    // Verificar si se encontró el usuario
+    if (!userData) {
+      return res.status(404).json({ error: "User not found" });
     }
+
+    // Crear el evento
+    const event = new Event({
+      name,
+      place,
+      date,
+      description,
+      category,
+    });
+
+    // Guardar el evento en la base de datos
+    await event.save();
+
+    // Crear el asistente con la información del usuario y el evento recién creado
+    const assistantData = {
+      name: userData.name,
+      surname: userData.surnames,
+      email: userData.email,
+      eventId: event._id,
+      username: userData.username,
+    };
+
+    // Realizar una solicitud a la API de asistentes para agregar al usuario como asistente
+    await axios.post("http://localhost:3002/assistants", assistantData);
+
+    res.sendStatus(201); // Envía respuesta 201 solo cuando la operación es exitosa
   } catch (error) {
-    console.error("DB problem", error);
-    res
-      .status(500)
-      .send({
+    console.error("Error creating event:", error);
+    res.status(500).send({
+      error: "Internal Server Error: Failed to create event and add user as assistant.",
+    });
+  }
+});*/
+
+/* DELETE delete an existing event. */
+router.delete(
+  "/:name",
+  passport.authenticate("bearer", { session: false }),
+  async function (req, res, next) {
+    var name = req.params.name;
+    try {
+      const deletedEvent = await Event.findOneAndDelete({ name: name });
+      if (deletedEvent) {
+        res.json(deletedEvent);
+      } else {
+        res.status(404).json({ error: "Event not found" });
+      }
+    } catch (error) {
+      console.error("DB problem", error);
+      res.status(500).send({
         error:
           "Internal Server Error: Failed to delete event from the database.",
       });
+    }
   }
-});
+);
 
 /* PUT update an existing event. */
-router.put("/:name", async function (req, res, next) {
-  var name = req.params.name;
-  var updatedEvent = req.body;
+router.put(
+  "/:name",
+  passport.authenticate("bearer", { session: false }),
+  async function (req, res, next) {
+    var name = req.params.name;
+    var updatedEvent = req.body;
 
-  try {
-    const existingEvent = await Event.findOne({ name: name });
-    if (existingEvent) {
-      Object.assign(existingEvent, updatedEvent);
-      await existingEvent.save();
-      res.json(existingEvent);
-    } else {
-      res.status(404).json({ error: "Event not found" });
-    }
-  } catch (error) {
-    console.error("DB problem", error);
-    res
-      .status(500)
-      .send({
+    try {
+      const existingEvent = await Event.findOne({ name: name });
+      if (existingEvent) {
+        Object.assign(existingEvent, updatedEvent);
+        await existingEvent.save();
+        res.json(existingEvent);
+      } else {
+        res.status(404).json({ error: "Event not found" });
+      }
+    } catch (error) {
+      console.error("DB problem", error);
+      res.status(500).send({
         error: "Internal Server Error: Failed to update event in the database.",
       });
+    }
   }
-});
+);
 
 module.exports = router;

@@ -35,13 +35,18 @@ describe("Events API", () => {
   describe("POST /events", () => {
     it("should create a new event", async () => {
       const eventData = {
-        name: "Test Event",
-        place: "Test Place",
+        name: "Cumpleaños Celia",
+        place: "Parque",
         date: new Date(2024, 3, 31),
+      };
+
+      const authHeader = {
+        Authorization: "Bearer b3c5c72b-e228-424d-98a8-a370c4ee2d5a",
       };
 
       const response = await request(app)
         .post("/api/v1/events")
+        .set(authHeader)
         .send(eventData);
 
       expect(response.status).toBe(201);
@@ -52,9 +57,12 @@ describe("Events API", () => {
         name: "Test Event",
         // Missing 'place' field intentionally
       };
-
+      const authHeader = {
+        Authorization: "Bearer b3c5c72b-e228-424d-98a8-a370c4ee2d5a",
+      };
       const response = await request(app)
         .post("/api/v1/events")
+        .set(authHeader)
         .send(incompleteEventData);
 
       expect(response.status).toBe(400);
@@ -67,8 +75,13 @@ describe("Events API", () => {
         date: "invalid-date-format", // Format is not valid
       };
 
+      const authHeader = {
+        Authorization: "Bearer b3c5c72b-e228-424d-98a8-a370c4ee2d5a",
+      };
+
       const response = await request(app)
         .post("/api/v1/events")
+        .set(authHeader)
         .send(eventData);
 
       expect(response.status).toBe(400);
@@ -78,14 +91,7 @@ describe("Events API", () => {
 
   describe("PUT /api/v1/events/:name", () => {
     it("should update an existing event", async () => {
-      const eventNameToUpdate = "EventToUpdate";
-
-      const assistantObjectId1 = await Event.findOne({
-        name: "UpdatedAssistant1",
-      }).select("_id");
-      const assistantObjectId2 = await Event.findOne({
-        name: "UpdatedAssistant2",
-      }).select("_id");
+      const eventNameToUpdate = "Boda A&J";
 
       // Crea un evento para ser actualizado
       const eventToUpdate = new Event({
@@ -94,22 +100,20 @@ describe("Events API", () => {
         date: new Date(2021, 3, 31),
         description: "Test Description",
         category: "Test Category",
-        assistants: [assistantObjectId1, assistantObjectId2],
       });
       await eventToUpdate.save();
 
       const updatedEventData = {
-        place: "Updated Place",
-        description: "Updated Description",
-        category: "Updated Category",
-        assistants: [
-          await Event.findOne({ name: "UpdatedAssistant1" }).select("_id"),
-          await Event.findOne({ name: "UpdatedAssistant2" }).select("_id"),
-        ],
+        place: "Hacienda",
+        description: "Una boda en una hacienda",
+        category: "Boda",
       };
-
+      const authHeader = {
+        Authorization: "Bearer b3c5c72b-e228-424d-98a8-a370c4ee2d5a",
+      };
       const response = await request(app)
         .put(`/api/v1/events/${eventNameToUpdate}`)
+        .set(authHeader)
         .send(updatedEventData);
 
       expect(response.status).toBe(200);
@@ -117,7 +121,6 @@ describe("Events API", () => {
       expect(response.body.place).toBe(updatedEventData.place);
       expect(response.body.description).toBe(updatedEventData.description);
       expect(response.body.category).toBe(updatedEventData.category);
-      expect(response.body.assistants).toEqual(updatedEventData.assistants);
     });
 
     it("should return 404 for updating a non-existing event", async () => {
@@ -126,11 +129,14 @@ describe("Events API", () => {
         place: "Updated Place",
         description: "Updated Description",
         category: "Updated Category",
-        assistants: ["UpdatedAssistant1", "UpdatedAssistant2"],
+      };
+      const authHeader = {
+        Authorization: "Bearer b3c5c72b-e228-424d-98a8-a370c4ee2d5a",
       };
 
       const response = await request(app)
         .put(`/api/v1/events/${nonExistingEventName}`)
+        .set(authHeader)
         .send(updatedEventData);
 
       expect(response.status).toBe(404);
@@ -142,14 +148,6 @@ describe("Events API", () => {
     it("should delete an existing event", async () => {
       const eventNameToDelete = "EventToDelete";
 
-      // Busca o crea ObjectId válidos
-      const assistantObjectId1 = await Event.findOne({
-        name: "Assistant1",
-      }).select("_id");
-      const assistantObjectId2 = await Event.findOne({
-        name: "Assistant2",
-      }).select("_id");
-
       // Crea un evento para ser eliminado
       const eventToDelete = new Event({
         name: eventNameToDelete,
@@ -157,14 +155,15 @@ describe("Events API", () => {
         date: new Date(2024, 3, 19),
         description: "Test Description",
         category: "Test Category",
-        assistants: [assistantObjectId1, assistantObjectId2],
       });
 
       await eventToDelete.save();
-
-      const response = await request(app).delete(
-        `/api/v1/events/${eventNameToDelete}`
-      );
+      const authHeader = {
+        Authorization: "Bearer b3c5c72b-e228-424d-98a8-a370c4ee2d5a",
+      };
+      const response = await request(app)
+        .delete(`/api/v1/events/${eventNameToDelete}`)
+        .set(authHeader);
 
       expect(response.status).toBe(200);
       expect(response.body.name).toBe(eventNameToDelete);
@@ -176,12 +175,20 @@ describe("Events API", () => {
 
     it("should return 404 for a non-existing event", async () => {
       const nonExistingEventName = "NonExistingEvent";
-      const response = await request(app).delete(
-        `/api/v1/events/${nonExistingEventName}`
-      );
+      const authHeader = {
+        Authorization: "Bearer b3c5c72b-e228-424d-98a8-a370c4ee2d5a",
+      };
+      const response = await request(app)
+        .delete(`/api/v1/events/${nonExistingEventName}`)
+        .set(authHeader);
 
       expect(response.status).toBe(404);
       expect(response.body.error).toBe("Event not found");
     });
+  });
+
+  afterAll(async () => {
+    //await Event.deleteMany({});
+    await mongoose.connection.close();
   });
 });

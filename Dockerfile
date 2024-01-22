@@ -12,6 +12,9 @@ COPY public ./public
 COPY routes/ ./routes
 COPY models/ ./models
 COPY app.js .
+COPY db.js .
+COPY passport.js .
+COPY setupdb.js .
 
 EXPOSE 3000
 

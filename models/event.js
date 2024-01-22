@@ -1,14 +1,15 @@
 const mongoose = require("mongoose");
 
 const eventSchema = new mongoose.Schema({
-  // 
   name: {
     type: String,
     required: true,
+    unique: false,
   },
   place: {
     type: String,
     required: true,
+    unique: false,
   },
   date: {
     type: Date,
@@ -16,16 +17,12 @@ const eventSchema = new mongoose.Schema({
   },
   description: {
     type: String,
+    unique: false,
   },
   category: {
     type: String,
+    unique: false,
   },
-  assistants: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: String,
-    },
-  ],
 });
 
 eventSchema.methods.cleanup = function () {
@@ -35,8 +32,7 @@ eventSchema.methods.cleanup = function () {
     date: this.date,
     description: this.description,
     category: this.category,
-    assistants: this.assistants,
-    _id: this._id
+    _id: this._id,
   };
 };
 

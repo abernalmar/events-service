@@ -92,13 +92,11 @@ router.post("/", async function (req, res, next) {
         error: "Internal Server Error: Failed to save event to the database.",
       });
 
-    });
-  
     }
   }
-);
-
-
+});
+  
+    
 
 // Función para crear automáticamente un asistente
 async function createAutomaticAssistant(eventId) {
@@ -144,52 +142,6 @@ async function createAutomaticAssistant(eventId) {
 }
 
 
-/* DELETE delete an existing event. */
-router.delete("/:name", async function (req, res, next) {
-  var name = req.params.name;
-
-  try {
-    // Realizar una solicitud a la API de usuarios para obtener información del usuario
-    const userResponse = await axios.get(`http://localhost:3001/users/username/${username}`);
-    const userData = userResponse.data;
-
-    // Verificar si se encontró el usuario
-    if (!userData) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    // Crear el evento
-    const event = new Event({
-      name,
-      place,
-      date,
-      description,
-      category,
-    });
-
-    // Guardar el evento en la base de datos
-    await event.save();
-
-    // Crear el asistente con la información del usuario y el evento recién creado
-    const assistantData = {
-      name: userData.name,
-      surname: userData.surnames,
-      email: userData.email,
-      eventId: event._id,
-      username: userData.username,
-    };
-
-    // Realizar una solicitud a la API de asistentes para agregar al usuario como asistente
-    await axios.post("http://localhost:3002/assistants", assistantData);
-
-    res.sendStatus(201); // Envía respuesta 201 solo cuando la operación es exitosa
-  } catch (error) {
-    console.error("Error creating event:", error);
-    res.status(500).send({
-      error: "Internal Server Error: Failed to create event and add user as assistant.",
-    });
-  }
-});*/
 
 /* DELETE delete an existing event. */
 router.delete(

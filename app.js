@@ -19,9 +19,17 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(
   cors({
+
+    origin: "http://localhost:3000",
+
     origin: "*",
+
   })
 );
+
+
+
+
 
 app.use("/", indexRouter);
 app.use("/api/v1/events", eventsRouter);

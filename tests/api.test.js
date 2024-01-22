@@ -87,20 +87,6 @@ describe("Events API", () => {
       expect(response.status).toBe(400);
     });
 
-    /*
-    it("should return 400 if 'date' is missing", async () => {
-      const incompleteEventData = {
-        name: "Test Event",
-        place: "Test Place",
-        // Missing 'date' field intentionally
-      };
-
-      const response = await request(app)
-        .post("/api/v1/events")
-        .send(incompleteEventData);
-
-      expect(response.status).toBe(400);
-    });*/
   });
 
   describe("PUT /api/v1/events/:name", () => {

@@ -18,9 +18,10 @@ describe("Events DB connection", () => {
 
   it("writes a event in the DB", async () => {
     const event = new Event({
-      name: "pepe",
-      place: "Integracion db",
-      description: "prueba",
+      name: "Boda J&A",
+      place: "Hacienda",
+      description: "Boda en una hacienda en el campo",
+      category: "Boda",
       date: new Date(2025, 3, 31),
     });
     await event.save();

@@ -60,8 +60,8 @@ router.get("/id/:id", async function (req, res, next) {
 
 // Ruta para crear un evento
 router.post("/", async function (req, res, next) {
-  const { name, place, date, description, category } = req.body;
-
+  const { name, place, date, description, category, user } = req.body;
+  console.log(user);
   try {
     // Crear una instancia del modelo Event con los datos proporcionados
 
@@ -74,12 +74,17 @@ router.post("/", async function (req, res, next) {
 
       assistants: [], // Inicializamos la lista de asistentes vacía por ahora
     });
-
-    // Guardar la instancia del modelo en la base de datos
     const savedEvent = await event.save();
 
+    const { email, name: userName, surname, username } = user;
+        console.log("EMAIL: ", email);
+    console.log("nameUser: ", name);
+
+    // Guardar la instancia del modelo en la base de datos
+    
+
     // Llamar a la función para crear un asistente automáticamente
-    await createAutomaticAssistant(savedEvent._id);
+    await createAutomaticAssistant(savedEvent._id, userName, surname, email, username);
 
     res.status(201).json(savedEvent.cleanup()); // Respuesta 201 cuando la operación es exitosa
   } catch (e) {
@@ -99,23 +104,25 @@ router.post("/", async function (req, res, next) {
     
 
 // Función para crear automáticamente un asistente
-async function createAutomaticAssistant(eventId) {
+async function createAutomaticAssistant(eventId, nameUser, Surname, Email, Username) {
   // Datos del asistente predeterminado
   const assistantData = {
-    name: "Nabil",
-    surname: "Fekir",
-    email: "nabil.fekir@example.com",
+    name: nameUser,
+    surname: Surname,
+    email: Email,
     eventId: eventId,
-    username: "nabil_fekir",
+    username: Username,
   };
 
   try {
+    console.log("AQUISIIII");
     // Encabezado de autorización con el token Bearer
     const authHeader = {
       Authorization: 'Bearer 37f7b2a4-2fdc-4e17-a72b-6570187d3cb6',
     };
 
     // Hacer una solicitud POST al servicio de asistentes para crear el asistente
+    console.log(assistantData);
     const response = await axios.post('http://localhost:4001/api/v1/assistants', assistantData, {
       headers: authHeader,
     });

@@ -43,12 +43,18 @@ router.get("/id/:id", async function (req, res, next) {
   var eventId = req.params.id;
 
   if (eventId) {
-    // If eventId is provided, find and return the specific event
-    var event = await Event.findById(eventId);
-    if (event) {
-      res.json(event);
-    } else {
-      res.status(404).json({ error: "Event not found" });
+    try {
+      // If eventId is provided, find and return the specific event
+      var event = await Event.findById(eventId);
+      if (event) {
+        res.json(event);
+      } else {
+        res.status(404).json({ error: "Event not found" });
+      }
+    } catch (error) {
+      // Handle any potential errors during the database query
+      console.error("Error finding event by ID:", error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
   } else {
     // If no eventId provided, return the entire list of events
@@ -71,13 +77,12 @@ router.post("/", async function (req, res, next) {
       date,
       description,
       category,
-
       assistants: [], // Inicializamos la lista de asistentes vacía por ahora
     });
     const savedEvent = await event.save();
 
     const { email, name: userName, surname, username } = user;
-        console.log("EMAIL: ", email);
+    console.log("EMAIL: ", email);
     console.log("nameUser: ", name);
 
     // Guardar la instancia del modelo en la base de datos
@@ -87,6 +92,7 @@ router.post("/", async function (req, res, next) {
     await createAutomaticAssistant(savedEvent._id, userName, surname, email, username);
 
     res.status(201).json(savedEvent.cleanup()); // Respuesta 201 cuando la operación es exitosa
+
   } catch (e) {
     if (e.errors) {
       console.error("Validation problem with saving", e);

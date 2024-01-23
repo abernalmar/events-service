@@ -38,6 +38,12 @@ describe("Events API", () => {
         name: "Cumpleaños Celia",
         place: "Parque",
         date: new Date(2024, 3, 31),
+        user: {
+          name: "Nombre del Usuario",
+          surname: "Apellido del Usuario",
+          email: "usuario@gmail.com",
+          username: "nombre_usuario"
+        }
       };
 
       const authHeader = {

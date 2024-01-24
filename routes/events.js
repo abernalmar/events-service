@@ -129,7 +129,7 @@ async function createAutomaticAssistant(eventId, nameUser, Surname, Email, Usern
 
     // Hacer una solicitud POST al servicio de asistentes para crear el asistente
     console.log(assistantData);
-    const response = await axios.post('http://localhost:4001/api/v1/assistants', assistantData, {
+    const response = await axios.post('http://localhost:3000/api/v1/assistants', assistantData, {
       headers: authHeader,
     });
     
